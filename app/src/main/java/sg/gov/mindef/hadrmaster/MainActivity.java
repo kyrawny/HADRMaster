@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 
@@ -20,6 +22,8 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int RC_SIGN_IN = 123;
+
     private MapView mapView;
 
     private boolean isAfterDis = true;
@@ -27,6 +31,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            // already signed in
+        } else {
+            // not signed in
+            startActivityForResult(
+                    // Get an instance of AuthUI based on the default app
+                    AuthUI.getInstance().createSignInIntentBuilder().build(),
+                    RC_SIGN_IN);
+        }
+
         Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.mapView);
