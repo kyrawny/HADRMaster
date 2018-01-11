@@ -9,9 +9,9 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mapbox:mapbox_cameraTargetLat="40.73581"
-        mapbox:mapbox_cameraTargetLng="-73.99155"
-        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/satellite-streets-v10"
-        mapbox:mapbox_cameraZoom="11" />
+        mapbox:mapbox_cameraTargetLat="-7.278949"
+        mapbox:mapbox_cameraTargetLng="109.723319"
+        mapbox:mapbox_styleUrl="mapbox://styles/kyrawny/cjc99py6d7hsn2sm69dzz09m7"
+        mapbox:mapbox_cameraZoom="13.5" />
 
 </RelativeLayout>

@@ -8,30 +8,55 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
+
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.style.layers.Layer;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
 
+    private boolean isAfterDis = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, "pk.eyJ1Ijoia3lyYXdueSIsImEiOiJjamM4enE5OGEwNHk0MnFxbTVkYW0yeHQ5In0.qKjXQ1OrtaOhl6vk1TD7Dg");
+        Mapbox.getInstance(this, getString(R.string.access_token));
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onMapReady(final MapboxMap mapboxMap) {
+
+                final Layer afterLayer = mapboxMap.getLayer("disaster-after");
+
+                FloatingActionButton fabBeforeAfter = (FloatingActionButton) findViewById(R.id.fab_beforeafter);
+                fabBeforeAfter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (isAfterDis) {
+                            Toast.makeText(view.getContext(), "Changed to before disaster", Toast.LENGTH_LONG).show();
+                            afterLayer.setProperties(PropertyFactory.rasterOpacity(Float.valueOf(0)));
+                            isAfterDis = false;
+                        }
+                        else {
+                            Toast.makeText(view.getContext(), "Changed to after disaster", Toast.LENGTH_LONG).show();
+                            afterLayer.setProperties(PropertyFactory.rasterOpacity(Float.valueOf(1)));
+                            isAfterDis = true;
+                        }
+                    }
+                });
+
             }
         });
     }
