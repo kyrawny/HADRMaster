@@ -90,6 +90,6 @@ public class MapFragment extends Fragment {
 
             }
         });
-        return inflater.inflate(R.layout.fragment_map, container, false);
+        return rootView;
     }
 }
