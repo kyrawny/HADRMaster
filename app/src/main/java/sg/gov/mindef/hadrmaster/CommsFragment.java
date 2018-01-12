@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -24,9 +25,11 @@ import com.google.firebase.database.Query;
  * Use the {@link CommsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CommsFragment extends Fragment {
+public class CommsFragment extends Fragment implements View.OnClickListener{
 
     private FirebaseListAdapter<ChatMessage> adapter;
+
+    private EditText input;
 
     public CommsFragment() {
         // Required empty public constructor
@@ -57,7 +60,7 @@ public class CommsFragment extends Fragment {
 
         FloatingActionButton fabSend = (FloatingActionButton) rootView.findViewById(R.id.fab_send);
 
-        final EditText input = (EditText) rootView.findViewById(R.id.text_input);
+        input = (EditText) rootView.findViewById(R.id.text_input);
 
         ListView listOfMessages = (ListView) rootView.findViewById(R.id.list_messages);
 
@@ -65,6 +68,7 @@ public class CommsFragment extends Fragment {
 
         FirebaseListOptions<ChatMessage> options = new FirebaseListOptions.Builder<ChatMessage>()
                 .setQuery(query, ChatMessage.class)
+                .setLayout(R.layout.message)
                 .build();
 
         FirebaseListAdapter<ChatMessage> firebaseListAdapter = new FirebaseListAdapter<ChatMessage>(options) {
@@ -87,21 +91,23 @@ public class CommsFragment extends Fragment {
 
         listOfMessages.setAdapter(adapter);
 
-        fabSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .push()
-                        .setValue(new ChatMessage(input.getText().toString(),
-                                FirebaseAuth.getInstance().
-                                    getCurrentUser().
-                                        getEmail())
-                        );
-                input.setText("");
-            }
-        });
+        fabSend.setOnClickListener(this);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_comms, container, false);
+        return rootView;
+    }
+
+    @Override
+    public void onClick(View view) {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .push()
+                .setValue(new ChatMessage(input.getText().toString(),
+                        FirebaseAuth.getInstance().
+                                getCurrentUser().
+                                getEmail())
+                );
+        input.setText("");
+        Toast.makeText(getActivity(), "clicked", Toast.LENGTH_SHORT).show();
     }
 }
