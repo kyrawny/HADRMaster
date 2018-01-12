@@ -54,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
             // already signed in
             Toast.makeText(this,
                     "Welcome " + FirebaseAuth.getInstance()
-                            .getCurrentUser()
-                            .getDisplayName(),
+                            .getCurrentUser().getEmail(),
                     Toast.LENGTH_LONG)
                     .show();
         } else {
@@ -190,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                         "Successfully signed in. Welcome!",
                         Toast.LENGTH_LONG)
                         .show();
-                finish();
                 return;
             } else {
                 // Sign in failed

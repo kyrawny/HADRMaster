@@ -59,15 +59,13 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        getActivity().setTitle("Navigation");
+        final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        getActivity().setTitle("Map");
 
         Mapbox.getInstance(getActivity(), getString(R.string.access_token));
 
         mapView = (MapView) rootView.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-
-        final FloatingActionButton fabBeforeAfter = (FloatingActionButton) rootView.findViewById(R.id.fab_beforeafter);
 
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -75,7 +73,7 @@ public class MapFragment extends Fragment {
 
                 final Layer afterLayer = mapboxMap.getLayer("disaster-after");
 
-                fabBeforeAfter.setOnClickListener(new View.OnClickListener() {
+                rootView.findViewById(R.id.fab_beforeafter).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (isAfterDis) {
