@@ -31,6 +31,8 @@ public class CommsFragment extends Fragment implements View.OnClickListener{
 
     private EditText input;
 
+    private ListView listOfMessages;
+
     public CommsFragment() {
         // Required empty public constructor
     }
@@ -53,6 +55,19 @@ public class CommsFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        displayChatMessages();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_comms, container, false);
@@ -62,34 +77,7 @@ public class CommsFragment extends Fragment implements View.OnClickListener{
 
         input = (EditText) rootView.findViewById(R.id.text_input);
 
-        ListView listOfMessages = (ListView) rootView.findViewById(R.id.list_messages);
-
-        Query query = FirebaseDatabase.getInstance().getReference();
-
-        FirebaseListOptions<ChatMessage> options = new FirebaseListOptions.Builder<ChatMessage>()
-                .setQuery(query, ChatMessage.class)
-                .setLayout(R.layout.message)
-                .build();
-
-        FirebaseListAdapter<ChatMessage> firebaseListAdapter = new FirebaseListAdapter<ChatMessage>(options) {
-            @Override
-            protected void populateView(View v, ChatMessage model, int position) {
-                // Get references to the views of message.xml
-                TextView messageText = (TextView)v.findViewById(R.id.message_text);
-                TextView messageUser = (TextView)v.findViewById(R.id.message_user);
-                TextView messageTime = (TextView)v.findViewById(R.id.message_time);
-
-                // Set their text
-                messageText.setText(model.getMessageText());
-                messageUser.setText(model.getMessageUser());
-
-                // Format the date before showing it
-                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                        model.getMessageTime()));
-            }
-        };
-
-        listOfMessages.setAdapter(adapter);
+        listOfMessages = (ListView) rootView.findViewById(R.id.list_messages);
 
         fabSend.setOnClickListener(this);
 
@@ -108,6 +96,36 @@ public class CommsFragment extends Fragment implements View.OnClickListener{
                                 getEmail())
                 );
         input.setText("");
-        Toast.makeText(getActivity(), "clicked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Sent!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void displayChatMessages() {
+
+        Query query = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseListOptions<ChatMessage> options = new FirebaseListOptions.Builder<ChatMessage>()
+                .setQuery(query, ChatMessage.class)
+                .setLayout(R.layout.message)
+                .build();
+
+        adapter = new FirebaseListAdapter<ChatMessage>(options) {
+            @Override
+            protected void populateView(View v, ChatMessage model, int position) {
+                // Get references to the views of message.xml
+                TextView messageText = (TextView)v.findViewById(R.id.message_text);
+                TextView messageUser = (TextView)v.findViewById(R.id.message_user);
+                TextView messageTime = (TextView)v.findViewById(R.id.message_time);
+
+                // Set their text
+                messageText.setText(model.getMessageText());
+                messageUser.setText(model.getMessageUser());
+
+                // Format the date before showing it
+                messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
+                        model.getMessageTime()));
+            }
+        };
+
+        listOfMessages.setAdapter(adapter);
     }
 }
